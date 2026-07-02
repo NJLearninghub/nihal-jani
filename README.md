@@ -42,7 +42,15 @@ python3 -m http.server 8000
 
 ## Deploying to GitHub Pages
 
-Repo **Settings → Pages → Deploy from a branch**, pick the branch and `/ (root)`.
+A GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) publishes the
+site to the `gh-pages` branch on every push. One-time setup (repo admin):
+
+1. **Settings → Pages → Build and deployment**
+2. Source: **Deploy from a branch**
+3. Branch: **`gh-pages`**, folder **`/ (root)`** → **Save**
+
+The site then serves at `https://njlearninghub.github.io/nihal-jani/` and
+republishes automatically on every push.
 
 ## Adding a portrait
 
