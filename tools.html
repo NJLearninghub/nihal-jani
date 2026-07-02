@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Interactive Lab — Nihal Jani</title>
+<meta name="description" content="Interactive physics simulations by Nihal Jani: projectile motion, the simple pendulum, and wave superposition — the kind of tools used in class every day." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('theme'); } catch (e) {}
+    if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">Nihal Jani</a>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="tools.html" class="active">Interactive Lab</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark / light theme" title="Toggle theme">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="lab-intro">
+    <h1>Interactive Lab</h1>
+    <p>A small sample of the in-browser simulations I build and teach with — the full library lives in <a href="index.html#projects">SimulateX</a>. Drag the sliders, launch, and hover over the plots to read off values.</p>
+  </div>
+
+  <!-- ============ PROJECTILE MOTION ============ -->
+  <div class="sim">
+    <div class="sim-head">
+      <div class="kind">Mechanics · Kinematics</div>
+      <h2>Projectile Motion</h2>
+      <p>Set the launch angle and speed, pick a planet, and fire. The dashed curve is the predicted path; hover anywhere along it to read position and time.</p>
+    </div>
+    <div class="sim-canvas-wrap">
+      <canvas id="sim-projectile" aria-label="Projectile motion simulation"></canvas>
+      <div class="sim-tip" id="pj-tip"></div>
+    </div>
+    <div class="sim-controls">
+      <div class="ctl">
+        <label for="pj-angle">Launch angle <output id="pj-angle-out">45°</output></label>
+        <input type="range" id="pj-angle" min="10" max="80" step="1" value="45" />
+      </div>
+      <div class="ctl">
+        <label for="pj-speed">Initial speed <output id="pj-speed-out">30 m/s</output></label>
+        <input type="range" id="pj-speed" min="5" max="60" step="1" value="30" />
+      </div>
+      <div class="ctl">
+        <label for="pj-gravity">Gravity</label>
+        <select id="pj-gravity">
+          <option value="9.81" selected>Earth — 9.81 m/s²</option>
+          <option value="1.62">Moon — 1.62 m/s²</option>
+          <option value="3.71">Mars — 3.71 m/s²</option>
+          <option value="24.79">Jupiter — 24.79 m/s²</option>
+        </select>
+      </div>
+      <div class="sim-actions">
+        <button class="btn primary" id="pj-launch" type="button">Launch</button>
+        <button class="btn" id="pj-reset" type="button">Reset</button>
+      </div>
+    </div>
+    <div class="readouts">
+      <div class="readout"><span class="r-label">Range</span><div class="r-value" id="pj-range">0<small>m</small></div></div>
+      <div class="readout"><span class="r-label">Max height</span><div class="r-value" id="pj-height">0<small>m</small></div></div>
+      <div class="readout"><span class="r-label">Time of flight</span><div class="r-value" id="pj-time">0<small>s</small></div></div>
+    </div>
+    <p class="formula">Governing equations: <code>R = v²·sin(2θ)/g</code> &nbsp; <code>H = v²·sin²θ/(2g)</code> &nbsp; <code>T = 2v·sinθ/g</code></p>
+  </div>
+
+  <!-- ============ PENDULUM ============ -->
+  <div class="sim">
+    <div class="sim-head">
+      <div class="kind">Mechanics · Oscillations</div>
+      <h2>Simple Pendulum</h2>
+      <p>A real large-angle pendulum, integrated numerically — not the small-angle approximation. Watch the period stretch as the release angle grows.</p>
+    </div>
+    <div class="sim-canvas-wrap">
+      <canvas id="sim-pendulum" aria-label="Simple pendulum simulation"></canvas>
+    </div>
+    <div class="sim-controls">
+      <div class="ctl">
+        <label for="pd-length">Length <output id="pd-length-out">1.5 m</output></label>
+        <input type="range" id="pd-length" min="0.5" max="3" step="0.1" value="1.5" />
+      </div>
+      <div class="ctl">
+        <label for="pd-angle">Release angle <output id="pd-angle-out">30°</output></label>
+        <input type="range" id="pd-angle" min="5" max="90" step="1" value="30" />
+      </div>
+      <div class="ctl">
+        <label for="pd-gravity">Gravity</label>
+        <select id="pd-gravity">
+          <option value="9.81" selected>Earth — 9.81 m/s²</option>
+          <option value="1.62">Moon — 1.62 m/s²</option>
+          <option value="3.71">Mars — 3.71 m/s²</option>
+        </select>
+      </div>
+    </div>
+    <div class="readouts">
+      <div class="readout"><span class="r-label">Small-angle period T₀</span><div class="r-value" id="pd-period">0<small>s</small></div></div>
+      <div class="readout"><span class="r-label">Bob speed (live)</span><div class="r-value" id="pd-energy">0<small>m/s</small></div></div>
+    </div>
+    <p class="formula">Small-angle period: <code>T₀ = 2π·√(L/g)</code> — the simulation itself solves <code>θ&#x2033; = −(g/L)·sin θ</code></p>
+  </div>
+
+  <!-- ============ WAVES ============ -->
+  <div class="sim">
+    <div class="sim-head">
+      <div class="kind">Waves · Superposition</div>
+      <h2>Wave Superposition</h2>
+      <p>Two travelling waves and their sum. Match the frequencies to see beats vanish; set them one apart and watch the envelope breathe. Hover to read all three displacements.</p>
+    </div>
+    <div class="sim-canvas-wrap">
+      <canvas id="sim-waves" aria-label="Wave superposition simulation"></canvas>
+      <div class="sim-tip" id="wv-tip"></div>
+    </div>
+    <div class="sim-controls">
+      <div class="ctl">
+        <label for="wv-a1">Wave 1 amplitude <output id="wv-a1-out">1.0</output></label>
+        <input type="range" id="wv-a1" min="0" max="1" step="0.1" value="1" />
+      </div>
+      <div class="ctl">
+        <label for="wv-f1">Wave 1 frequency <output id="wv-f1-out">3</output></label>
+        <input type="range" id="wv-f1" min="1" max="8" step="1" value="3" />
+      </div>
+      <div class="ctl">
+        <label for="wv-a2">Wave 2 amplitude <output id="wv-a2-out">1.0</output></label>
+        <input type="range" id="wv-a2" min="0" max="1" step="0.1" value="1" />
+      </div>
+      <div class="ctl">
+        <label for="wv-f2">Wave 2 frequency <output id="wv-f2-out">4</output></label>
+        <input type="range" id="wv-f2" min="1" max="8" step="1" value="4" />
+      </div>
+    </div>
+    <p class="formula">Principle of superposition: <code>y(x,t) = y₁(x,t) + y₂(x,t)</code></p>
+  </div>
+
+  <div style="height:56px"></div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; <span id="yr"></span> Nihal Jani</span>
+    <span><a href="index.html">Back to portfolio</a></span>
+  </div>
+</footer>
+
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/sims.js"></script>
+</body>
+</html>
