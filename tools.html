@@ -20,23 +20,53 @@
 </head>
 <body>
 
-<header class="site-header">
-  <div class="wrap">
-    <a class="brand" href="index.html">Nihal Jani</a>
-    <nav class="site-nav">
-      <a href="index.html">Home</a>
-      <a href="index.html#projects">Projects</a>
-      <a href="tools.html" class="active">Interactive Lab</a>
-      <a href="index.html#contact">Contact</a>
-    </nav>
+<aside class="rail">
+  <div class="rail-top">
+    <div>
+      <a class="rail-name" href="index.html">Nihal<br/>Jani</a>
+      <div class="rail-roles">
+        <div>Educator &mdash; <b>Physics &amp; Mathematics</b></div>
+        <div>Online &amp; AI-integrated teaching</div>
+        <div>Founder, <b>NJ&rsquo;s Learning Hub</b></div>
+      </div>
+    </div>
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark / light theme" title="Toggle theme">
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
   </div>
-</header>
 
-<main class="wrap">
+  <nav class="rail-nav">
+    <a href="index.html">Home <span class="n">&#8598;</span></a>
+    <a href="index.html#projects">Projects <span class="n">&#8598;</span></a>
+    <a href="tools.html" class="active">Interactive Lab <span class="n">&#9679;</span></a>
+    <a href="index.html#contact">Contact <span class="n">&#8598;</span></a>
+  </nav>
+
+  <div class="rail-block">
+    <span class="label">On this page</span>
+    <div class="rail-contact">
+      <span>Projectile Motion</span>
+      <span>Simple Pendulum</span>
+      <span>Wave Superposition</span>
+      <span>Unit Circle &amp; Trig</span>
+    </div>
+  </div>
+
+  <div class="rail-block">
+    <span class="label">Contact</span>
+    <div class="rail-contact">
+      <span>janinihal7@gmail.com</span>
+      <span>njlearninghub.com</span>
+    </div>
+  </div>
+
+  <div class="rail-foot">&copy; <span class="yr"></span> Nihal Jani</div>
+</aside>
+
+<main>
+
+<div class="wrap">
 
   <div class="lab-intro">
     <h1>Interactive Lab</h1>
@@ -183,11 +213,13 @@
 
   <div style="height:56px"></div>
 
+</div>
+
 </main>
 
 <footer class="site-footer">
   <div class="wrap">
-    <span>&copy; <span id="yr"></span> Nihal Jani</span>
+    <span>&copy; <span class="yr"></span> Nihal Jani</span>
     <span><a href="index.html">Back to portfolio</a></span>
   </div>
 </footer>

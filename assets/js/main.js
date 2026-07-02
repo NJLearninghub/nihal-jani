@@ -1,8 +1,9 @@
 /* Shared page behaviour: reveal-on-scroll, nav scroll-spy, footer year,
    and the subtle projectile-arc doodle behind the hero. */
 (function () {
-  var yr = document.getElementById('yr');
-  if (yr) yr.textContent = new Date().getFullYear();
+  document.querySelectorAll('.yr').forEach(function (el) {
+    el.textContent = new Date().getFullYear();
+  });
 
   // Reveal sections as they enter the viewport.
   var io = new IntersectionObserver(function (entries) {
@@ -13,7 +14,7 @@
   document.querySelectorAll('.fade').forEach(function (el) { io.observe(el); });
 
   // Scroll-spy: highlight the section currently in view in the header nav.
-  var links = Array.prototype.slice.call(document.querySelectorAll('.site-nav a[href^="#"]'));
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail-nav a[href^="#"]'));
   if (links.length) {
     var map = {};
     links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
