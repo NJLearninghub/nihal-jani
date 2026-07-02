@@ -152,6 +152,35 @@
     <p class="formula">Principle of superposition: <code>y(x,t) = y₁(x,t) + y₂(x,t)</code></p>
   </div>
 
+  <!-- ============ UNIT CIRCLE ============ -->
+  <div class="sim">
+    <div class="sim-head">
+      <div class="kind">Mathematics · Trigonometry</div>
+      <h2>Unit Circle &amp; Trigonometric Functions</h2>
+      <p>Where sin and cos actually come from: a point moving round the unit circle, its height tracing the sine curve and its horizontal shadow the cosine. Drag the angle or press play; hover over the graph to read values at any angle.</p>
+    </div>
+    <div class="sim-canvas-wrap">
+      <canvas id="sim-circle" aria-label="Unit circle and trigonometric functions simulation"></canvas>
+      <div class="sim-tip" id="uc-tip"></div>
+    </div>
+    <div class="sim-controls">
+      <div class="ctl">
+        <label for="uc-theta">Angle θ <output id="uc-theta-out">45°</output></label>
+        <input type="range" id="uc-theta" min="0" max="360" step="1" value="45" />
+      </div>
+      <div class="sim-actions">
+        <button class="btn primary" id="uc-play" type="button">Play</button>
+        <button class="btn" id="uc-reset" type="button">Reset</button>
+      </div>
+    </div>
+    <div class="readouts">
+      <div class="readout"><span class="r-label">sin θ</span><div class="r-value" id="uc-sin">0<small>&nbsp;</small></div></div>
+      <div class="readout"><span class="r-label">cos θ</span><div class="r-value" id="uc-cos">0<small>&nbsp;</small></div></div>
+      <div class="readout"><span class="r-label">tan θ</span><div class="r-value" id="uc-tan">0<small>&nbsp;</small></div></div>
+    </div>
+    <p class="formula">The identity that never breaks: <code>sin²θ + cos²θ = 1</code> &nbsp; and &nbsp; <code>tan θ = sin θ / cos θ</code></p>
+  </div>
+
   <div style="height:56px"></div>
 
 </main>

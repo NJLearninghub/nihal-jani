@@ -10,7 +10,7 @@ Plain HTML/CSS/JS — no build step, no dependencies. Ready for GitHub Pages.
 | Page | What's on it |
 |---|---|
 | `index.html` | About, Experience, Education, Skills & Tools, Publications, Projects, Achievements, Contact |
-| `tools.html` | **Interactive Lab** — live physics simulations: projectile motion, simple pendulum, wave superposition |
+| `tools.html` | **Interactive Lab** — live simulations: projectile motion, simple pendulum, wave superposition, unit circle & trig functions |
 
 ## Features
 
@@ -24,6 +24,9 @@ Plain HTML/CSS/JS — no build step, no dependencies. Ready for GitHub Pages.
   - *Simple pendulum* — real large-angle dynamics (numerical integration,
     not the small-angle approximation).
   - *Wave superposition* — two travelling waves and their sum; make beats.
+  - *Unit circle & trig functions* — a point moving round the unit circle
+    traces the sine and cosine curves; drag the angle or press play, with
+    live sin/cos/tan readouts.
 - "Field notes" theme: graph-paper light mode, chalkboard dark mode, with an
   animated projectile-arc doodle in the hero.
 - Responsive, respects `prefers-reduced-motion`, no frameworks.

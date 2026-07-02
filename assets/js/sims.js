@@ -473,4 +473,168 @@
     upd();
     if (REDUCED) hz.repaint(); else hz.start();
   })();
+
+  /* ======================================================================
+     4. UNIT CIRCLE & TRIG FUNCTIONS
+     ====================================================================== */
+  (function unitCircle() {
+    var canvas = document.getElementById('sim-circle');
+    if (!canvas) return;
+    var H = 340;
+
+    var elTheta = document.getElementById('uc-theta');
+    var outTheta = document.getElementById('uc-theta-out');
+    var btnPlay = document.getElementById('uc-play');
+    var btnReset = document.getElementById('uc-reset');
+    var roSin = document.getElementById('uc-sin');
+    var roCos = document.getElementById('uc-cos');
+    var roTan = document.getElementById('uc-tan');
+    var tip = document.getElementById('uc-tip');
+
+    var playing = false;
+    var hover = null; // {x} in CSS px, only meaningful inside the graph area
+
+    function theta() { return (+elTheta.value) * Math.PI / 180; }
+
+    function updateReadouts() {
+      var th = theta();
+      outTheta.value = elTheta.value + '°';
+      roSin.firstChild.nodeValue = fmt(Math.sin(th), 3);
+      roCos.firstChild.nodeValue = fmt(Math.cos(th), 3);
+      var c = Math.cos(th);
+      roTan.firstChild.nodeValue = Math.abs(c) < 0.01 ? '±∞' : fmt(Math.tan(th), 3);
+    }
+
+    /* Layout: unit circle on the left, sin/cos vs θ graph on the right. */
+    function geom(w, h) {
+      var R = Math.min(h * 0.32, w * 0.14);
+      var cx = 24 + R, cy = h / 2;
+      var gx0 = cx + R + 46;           // graph left edge
+      var gx1 = w - 66;                // graph right edge (room for labels)
+      return { R: R, cx: cx, cy: cy, gx0: gx0, gx1: gx1,
+               X: function (th) { return gx0 + (th / (2 * Math.PI)) * (gx1 - gx0); },
+               Y: function (v) { return cy - v * R; } };
+    }
+
+    function frame(ctx, w, h, dt) {
+      if (playing && !REDUCED && dt > 0) {
+        var deg = (+elTheta.value + 40 * dt) % 360;
+        elTheta.value = deg;
+        updateReadouts();
+      }
+      var th = theta();
+      var g = geom(w, h);
+      var px = g.cx + Math.cos(th) * g.R;
+      var py = g.cy - Math.sin(th) * g.R;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.font = '11px Inter, system-ui, sans-serif';
+
+      // ---- circle side: axes, circle, angle arc ----
+      ctx.strokeStyle = P.rule; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(g.cx - g.R - 14, g.cy); ctx.lineTo(g.cx + g.R + 14, g.cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(g.cx, g.cy - g.R - 14); ctx.lineTo(g.cx, g.cy + g.R + 14); ctx.stroke();
+      ctx.strokeStyle = P.soft; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(g.cx, g.cy, g.R, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(g.cx, g.cy, 16, 0, -th, true); ctx.stroke();
+
+      // cos leg (along the x-axis) and sin leg (vertical), then the radius
+      ctx.setLineDash([4, 4]); ctx.lineWidth = 2;
+      ctx.strokeStyle = P.s2;
+      ctx.beginPath(); ctx.moveTo(g.cx, g.cy); ctx.lineTo(px, g.cy); ctx.stroke();
+      ctx.strokeStyle = P.s1;
+      ctx.beginPath(); ctx.moveTo(px, g.cy); ctx.lineTo(px, py); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.strokeStyle = P.ink; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(g.cx, g.cy); ctx.lineTo(px, py); ctx.stroke();
+      ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2);
+      ctx.fillStyle = P.ink; ctx.fill();
+
+      // bridge: dotted line carrying the height across to the sine curve
+      ctx.strokeStyle = P.faint; ctx.lineWidth = 1; ctx.setLineDash([2, 5]);
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(g.X(th), py); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // ---- graph side: axes, curves, current points ----
+      ctx.strokeStyle = P.rule; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(g.gx0, g.cy); ctx.lineTo(g.gx1, g.cy); ctx.stroke();
+      ctx.fillStyle = P.faint; ctx.textAlign = 'center';
+      [[0, '0'], [Math.PI / 2, '90°'], [Math.PI, '180°'], [3 * Math.PI / 2, '270°'], [2 * Math.PI, '360°']]
+        .forEach(function (t) {
+          ctx.beginPath(); ctx.moveTo(g.X(t[0]), g.cy - 3); ctx.lineTo(g.X(t[0]), g.cy + 3);
+          ctx.strokeStyle = P.faint; ctx.stroke();
+          ctx.fillText(t[1], g.X(t[0]), g.cy + 16);
+        });
+
+      [[Math.sin, P.s1, 'sin θ'], [Math.cos, P.s2, 'cos θ']].forEach(function (s) {
+        ctx.strokeStyle = s[1]; ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (var k = 0; k <= 120; k++) {
+          var tt = 2 * Math.PI * k / 120;
+          var xx = g.X(tt), yy = g.Y(s[0](tt));
+          if (k === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+        // direct label at the right edge
+        ctx.fillStyle = s[1]; ctx.textAlign = 'left';
+        ctx.fillText(s[2], g.gx1 + 8, g.Y(s[0](2 * Math.PI)) + (s[0] === Math.sin ? -8 : -6));
+        // current point, ringed with the surface colour
+        ctx.beginPath(); ctx.arc(g.X(th), g.Y(s[0](th)), 5, 0, Math.PI * 2);
+        ctx.fillStyle = s[1]; ctx.fill();
+        ctx.strokeStyle = P.surface; ctx.lineWidth = 2; ctx.stroke();
+      });
+
+      // hover crosshair over the graph area
+      if (hover && hover.x >= g.gx0 && hover.x <= g.gx1) {
+        var hth = (hover.x - g.gx0) / (g.gx1 - g.gx0) * 2 * Math.PI;
+        ctx.strokeStyle = P.faint; ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(hover.x, g.cy - g.R - 8); ctx.lineTo(hover.x, g.cy + g.R + 8); ctx.stroke();
+        ctx.setLineDash([]);
+        [[Math.sin, P.s1], [Math.cos, P.s2]].forEach(function (s) {
+          ctx.beginPath(); ctx.arc(hover.x, g.Y(s[0](hth)), 4, 0, Math.PI * 2);
+          ctx.fillStyle = s[1]; ctx.fill();
+          ctx.strokeStyle = P.surface; ctx.lineWidth = 2; ctx.stroke();
+        });
+        tip.innerHTML = 'θ = ' + fmt(hth * 180 / Math.PI, 0) + '°' +
+          '<br>sin = ' + fmt(Math.sin(hth), 3) +
+          '<br>cos = ' + fmt(Math.cos(hth), 3);
+        tip.style.left = hover.x + 'px';
+        tip.style.top = (g.cy - g.R) + 'px';
+        tip.classList.add('show');
+      } else {
+        tip.classList.remove('show');
+      }
+    }
+
+    var hz = harness(canvas, H, frame);
+
+    function setPlaying(on) {
+      playing = on && !REDUCED;
+      btnPlay.textContent = playing ? 'Pause' : 'Play';
+      if (playing) hz.start(); else hz.stop();
+    }
+
+    btnPlay.addEventListener('click', function () { setPlaying(!playing); });
+    btnReset.addEventListener('click', function () {
+      setPlaying(false);
+      elTheta.value = 45;
+      updateReadouts();
+      hz.repaint();
+    });
+    elTheta.addEventListener('input', function () {
+      setPlaying(false);
+      updateReadouts();
+      hz.repaint();
+    });
+    canvas.addEventListener('pointermove', function (e) {
+      var r = canvas.getBoundingClientRect();
+      hover = { x: e.clientX - r.left };
+      hz.repaint();
+    });
+    canvas.addEventListener('pointerleave', function () { hover = null; hz.repaint(); });
+
+    updateReadouts();
+    hz.repaint();
+  })();
 })();
